@@ -3,7 +3,6 @@ package server
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 
@@ -40,20 +39,22 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.Get("/auth/{provider}", func(res http.ResponseWriter, req *http.Request) {
 		provider := chi.URLParam(req, "provider")
 
-		req = req.WithContext(context.WithValue(context.Background(), "provider", provider))
-		// try to get the user without re-authenticating
-		if _, err := gothic.CompleteUserAuth(res, req); err == nil {
-			// t, _ := template.New("foo").Parse(userTemplate)
-			// t.Execute(res, gothUser)
-			log.Fatal("something went wrong")
-		} else {
-			gothic.BeginAuthHandler(res, req)
+		// Add the provider to the request context
+		req = req.WithContext(context.WithValue(req.Context(), "provider", provider))
+
+		// Try to complete authentication (if user is already authenticated)
+		if user, err := gothic.CompleteUserAuth(res, req); err == nil {
+			log.Printf("User already authenticated: %+v", user)
+
+			// Redirect to the frontend (e.g., dashboard or another page)
+			http.Redirect(res, req, "http://localhost:5173/", http.StatusFound)
+			return
 		}
 
-		http.Redirect(res, req, "http://localhost:5173", http.StatusFound)
-
+		// Start authentication flow
+		log.Printf("Starting authentication with provider: %s", provider)
+		gothic.BeginAuthHandler(res, req)
 	})
-
 	return r
 }
 
@@ -76,16 +77,23 @@ func (s *Server) healthHandler(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) getAuthCallbackFunction(w http.ResponseWriter, r *http.Request) {
 	provider := chi.URLParam(r, "provider")
-
 	r = r.WithContext(context.WithValue(context.Background(), "provider", provider))
 
+	// Complete the authentication process
 	user, err := gothic.CompleteUserAuth(w, r)
 	if err != nil {
-		fmt.Fprintln(w, r)
+		log.Printf("Authentication failed: %v", err)
+		http.Redirect(w, r, "http://localhost:5173/", http.StatusFound)
 		return
 	}
 
-	fmt.Println(user)
+	log.Printf("User authenticated: %+v", user)
 
-	http.Redirect(w, r, "http://localhost:5173", http.StatusFound)
+	// Redirect to frontend (dashboard or dynamic URL)
+	redirectURL := r.URL.Query().Get("redirect_to")
+	if redirectURL == "" {
+		redirectURL = "http://localhost:5173/"
+	}
+
+	http.Redirect(w, r, redirectURL, http.StatusFound)
 }
