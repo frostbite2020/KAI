@@ -2,7 +2,6 @@ package models
 
 import "gorm.io/gorm"
 
-// ScheduleCarriagePrice model
 type ScheduleCarriagePrice struct {
 	gorm.Model
 	ScheduleID uint     `json:"schedule_id"`

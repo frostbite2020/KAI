@@ -32,11 +32,3 @@ func GetTrains(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(trains)
 }
-
-func UpdateTrain(db *gorm.DB, train *models.Train) error {
-	return db.Save(train).Error
-}
-
-func DeleteTrain(db *gorm.DB, trainID uint) error {
-	return db.Delete(&models.Train{}, trainID).Error
-}

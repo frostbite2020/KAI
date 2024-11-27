@@ -2,24 +2,37 @@ package services
 
 import (
 	"MsKAI/internal/models"
+	"encoding/json"
+	"fmt"
+	"net/http"
 
 	"gorm.io/gorm"
 )
 
-func CreateCity(db *gorm.DB, city *models.City) error {
-	return db.Create(city).Error
+func CreateCity(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
+	var city models.City
+	err := json.NewDecoder(r.Body).Decode(&city)
+	if err != nil {
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	if err := db.Create(&city).Error; err != nil {
+		http.Error(w, fmt.Sprintf("Error creating city: %v", err), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(city)
 }
 
-func GetCities(db *gorm.DB) ([]models.City, error) {
+func GetCities(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 	var cities []models.City
-	err := db.Preload("Stations").Find(&cities).Error
-	return cities, err
-}
+	if err := db.Find(&cities).Error; err != nil {
+		http.Error(w, fmt.Sprintf("Error fetching cities: %v", err), http.StatusInternalServerError)
+		return
+	}
 
-func UpdateCity(db *gorm.DB, city *models.City) error {
-	return db.Save(city).Error
-}
-
-func DeleteCity(db *gorm.DB, cityID uint) error {
-	return db.Delete(&models.City{}, cityID).Error
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(cities)
 }

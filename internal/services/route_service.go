@@ -2,24 +2,39 @@ package services
 
 import (
 	"MsKAI/internal/models"
+	"encoding/json"
+	"net/http"
 
 	"gorm.io/gorm"
 )
 
-func CreateRoute(db *gorm.DB, route *models.Route) error {
-	return db.Create(route).Error
+func CreateRoute(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
+	var route models.Route
+
+	if err := json.NewDecoder(r.Body).Decode(&route); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	// Save the route to the database
+	if err := db.Create(&route).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(route)
 }
 
-func GetRoutes(db *gorm.DB) ([]models.Route, error) {
+func GetRoutes(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 	var routes []models.Route
-	err := db.Preload("StartStation").Preload("EndStation").Find(&routes).Error
-	return routes, err
-}
 
-func UpdateRoute(db *gorm.DB, route *models.Route) error {
-	return db.Save(route).Error
-}
+	if err := db.Preload("StartStation.City").
+		Preload("EndStation.City").
+		Find(&routes).Error; err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
-func DeleteRoute(db *gorm.DB, routeID uint) error {
-	return db.Delete(&models.Route{}, routeID).Error
+	json.NewEncoder(w).Encode(routes)
 }

@@ -50,6 +50,7 @@ func MigrateDB() {
 		&models.Carriage{},
 		&models.Schedule{},
 		&models.Seat{},
+		&models.ScheduleCarriagePrice{},
 	)
 	if err != nil {
 		log.Fatalf("Error during migration: %v", err)
