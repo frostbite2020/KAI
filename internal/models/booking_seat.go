@@ -1,8 +1,13 @@
 package models
 
+import "gorm.io/gorm"
+
 type BookingSeat struct {
-	BookingID uint `gorm:"primaryKey"`
-	SeatID    uint `gorm:"primaryKey"`
+	gorm.Model
+	SeatID    uint    `json:"seat_id"`
+	Seat      Seat    `gorm:"foreignkey:SeatID" json:"seat"`
+	BookingID uint    `json:"booking_id"`
+	Booking   Booking `gorm:"foreignkey:BookingID" json:"booking"`
 }
 
 func (BookingSeat) TableName() string {

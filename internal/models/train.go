@@ -7,6 +7,11 @@ import (
 type Train struct {
 	gorm.Model
 	Name      string     `json:"name"`
-	Type      string     `json:"type"`      // e.g., Economy, Business, etc.
-	Schedules []Schedule `json:"schedules"` // One-to-many relation with Schedule
+	Type      string     `json:"type"`
+	Schedules []Schedule `json:"schedules"`
+	Carriages []Carriage `json:"carriages"`
+}
+
+func (Train) TableName() string {
+	return "trains"
 }

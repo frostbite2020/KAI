@@ -23,18 +23,21 @@ func GetBookedSeats(db *gorm.DB, scheduleID uint) ([]models.Seat, error) {
 
 func CancelBooking(db *gorm.DB, bookingID uint) error {
 	var booking models.Booking
+	// Preload BookedSeats to load the seats associated with the booking
 	err := db.Preload("BookedSeats").First(&booking, bookingID).Error
 	if err != nil {
 		return err
 	}
 
+	// Iterate over the booked seats and update their status to "Available"
 	for _, seat := range booking.BookedSeats {
-		err := db.Model(&models.Seat{}).Where("id = ?", seat.ID).Update("status", "Available").Error
+		err := db.Model(&models.Seat{}).Where("id = ?", seat.ID).Update("booked", "Available").Error
 		if err != nil {
 			return err
 		}
 	}
 
+	// Delete the booking record from the database
 	err = db.Delete(&booking).Error
 	if err != nil {
 		return err

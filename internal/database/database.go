@@ -44,12 +44,12 @@ func MigrateDB() {
 		&models.Route{},
 		&models.Session{},
 		&models.User{},
+		&models.Train{},
 		&models.BookingSeat{},
 		&models.Booking{},
 		&models.Carriage{},
 		&models.Schedule{},
 		&models.Seat{},
-		&models.Train{},
 	)
 	if err != nil {
 		log.Fatalf("Error during migration: %v", err)

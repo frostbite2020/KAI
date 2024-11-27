@@ -1,18 +1,18 @@
 package models
 
-import (
-	"time"
+import "gorm.io/gorm"
 
-	"gorm.io/gorm"
-)
-
+// Schedule model
 type Schedule struct {
 	gorm.Model
-	TrainID   uint       `json:"train_id"` // Foreign key for Train
-	Train     Train      `json:"train"`    // Association with Train
-	RouteID   uint       `json:"route_id"` // Foreign key for Route
-	Route     Route      `json:"route"`    // Association with Route
-	Departure time.Time  `json:"departure"`
-	Arrival   time.Time  `json:"arrival"`
-	Carriages []Carriage `json:"carriages"` // One-to-many relation with Carriage
+	TrainID   uint   `json:"train_id"`
+	Train     Train  `gorm:"foreignKey:TrainID" json:"train"`
+	RouteID   uint   `json:"route_id"`
+	Route     Route  `gorm:"foreignKey:RouteID" json:"route"`
+	Departure string `json:"departure"`
+	Arrival   string `json:"arrival"`
+}
+
+func (Schedule) TableName() string {
+	return "schedules"
 }

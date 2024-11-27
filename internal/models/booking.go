@@ -8,13 +8,13 @@ import (
 
 type Booking struct {
 	gorm.Model
-	UserID      uint      `json:"user_id"`      // Foreign key to User
-	User        User      `json:"user"`         // Association to User model (not shown here)
-	ScheduleID  uint      `json:"schedule_id"`  // Foreign key to Schedule
-	Schedule    Schedule  `json:"schedule"`     // Association to Schedule
-	BookedSeats []Seat    `json:"booked_seats"` // Many-to-many relationship with Seat
-	BookingDate time.Time `json:"booking_date"` // Date of booking
-	TotalAmount float64   `json:"total_amount"` // Total booking amount
+	UserID      uint      `json:"user_id"`
+	User        User      `gorm:"foreignkey:UserID" json:"user"`
+	ScheduleID  uint      `json:"schedule_id"`
+	Schedule    Schedule  `gorm:"foreignkey:ScheduleID" json:"schedule"`
+	BookedSeats []Seat    `gorm:"many2many:booking_seats;" json:"booked_seats"`
+	BookingDate time.Time `json:"booking_date"`
+	TotalAmount float64   `json:"total_amount"`
 }
 
 func (Booking) TableName() string {

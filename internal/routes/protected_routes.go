@@ -3,6 +3,8 @@ package routes
 import (
 	"MsKAI/internal/middleware"
 	"MsKAI/internal/services"
+	"fmt"
+	"net/http"
 
 	"github.com/go-chi/chi/v5"
 	"gorm.io/gorm"
@@ -22,5 +24,18 @@ func RegisterProtectedRoutes(r chi.Router, db *gorm.DB) {
 		r.Get("/health", services.HealthCheckHandler)
 
 		api.Post("/logout", services.LogoutHandler)
+
+		api.Get("/trains", func(w http.ResponseWriter, r *http.Request) {
+			services.GetTrains(w, r, db)
+		})
+
+		api.Post("/train", func(w http.ResponseWriter, r *http.Request) {
+			// Call CreateTrain and pass in the necessary arguments
+			err := services.CreateTrain(w, r, db)
+			if err != nil {
+				// Handle error properly
+				http.Error(w, fmt.Sprintf("Error creating train: %v", err), http.StatusInternalServerError)
+			}
+		})
 	})
 }
