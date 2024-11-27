@@ -60,7 +60,9 @@ func GetSchedules(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 	err := db.Preload("Train").
 		Preload("Route").
 		Preload("Route.StartStation").
+		Preload("Route.StartStation.City").
 		Preload("Route.EndStation").
+		Preload("Route.EndStation.City").
 		Where("route_id = ? AND departure > ?", routeID, departure).
 		Find(&schedules).Error
 

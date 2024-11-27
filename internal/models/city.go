@@ -6,8 +6,7 @@ import (
 
 type City struct {
 	gorm.Model
-	Name     string    `json:"name"`
-	Stations []Station `json:"stations"`
+	Name string `json:"name"`
 }
 
 func (City) TableName() string {
