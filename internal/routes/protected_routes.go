@@ -67,22 +67,27 @@ func RegisterProtectedRoutes(r chi.Router, db *gorm.DB) {
 		})
 
 		// Schedules Endpoints
-		api.Post("/schedule", func(w http.ResponseWriter, r *http.Request) {
-			services.CreateSchedule(w, r, db)
-		})
+		// api.Post("/schedule", func(w http.ResponseWriter, r *http.Request) {
+		// 	services.CreateSchedule(w, r, db)
+		// })
+
 		api.Get("/schedules", func(w http.ResponseWriter, r *http.Request) {
 			services.GetSchedules(w, r, db)
 		})
 
-		api.Post("/schedule-carriage-price", func(w http.ResponseWriter, r *http.Request) {
-			services.CreateScheduleCarriagePrice(w, r, db)
-		})
-		api.Get("/schedule-carriage-prices", func(w http.ResponseWriter, r *http.Request) {
-			services.GetScheduleCarriagePrices(w, r, db)
-		})
+		// api.Post("/schedule-carriage-price", func(w http.ResponseWriter, r *http.Request) {
+		// 	services.CreateScheduleCarriagePrice(w, r, db)
+		// })
+		// api.Get("/schedule-carriage-prices", func(w http.ResponseWriter, r *http.Request) {
+		// 	services.GetScheduleCarriagePrices(w, r, db)
+		// })
 
-		api.Get("/schedules", func(w http.ResponseWriter, r *http.Request) {
-			services.GetSchedules(w, r, db)
+		// api.Get("/schedules", func(w http.ResponseWriter, r *http.Request) {
+		// 	services.GetSchedules(w, r, db)
+		// })
+
+		api.Post("/booking", func(w http.ResponseWriter, r *http.Request) {
+			services.CreateBooking(w, r, db)
 		})
 	})
 }

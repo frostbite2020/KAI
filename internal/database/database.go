@@ -15,7 +15,7 @@ import (
 var DB *gorm.DB
 
 func InitializeDB() {
-	err := godotenv.Load("../../.env")
+	err := godotenv.Load()
 	if err != nil {
 		log.Fatalf("Error loading .env file: %v", err)
 	}
@@ -45,12 +45,13 @@ func MigrateDB() {
 		&models.Session{},
 		&models.User{},
 		&models.Train{},
-		&models.BookingSeat{},
 		&models.Booking{},
 		&models.Carriage{},
 		&models.Schedule{},
 		&models.Seat{},
 		&models.ScheduleCarriagePrice{},
+		&models.ScheduleRoute{},
+		&models.RouteSegment{},
 	)
 	if err != nil {
 		log.Fatalf("Error during migration: %v", err)

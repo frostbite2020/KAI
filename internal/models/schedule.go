@@ -1,15 +1,17 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"time"
+
+	"gorm.io/gorm"
+)
 
 type Schedule struct {
 	gorm.Model
-	TrainID   uint   `json:"train_id"`
-	Train     Train  `gorm:"foreignKey:TrainID" json:"train"`
-	RouteID   uint   `json:"route_id"`
-	Route     Route  `gorm:"foreignKey:RouteID" json:"route"`
-	Departure string `json:"departure"`
-	Arrival   string `json:"arrival"`
+	TrainID        uint            `json:"train_id"`
+	Train          Train           `gorm:"foreignKey:TrainID" json:"train"`
+	Departure      time.Time       `json:"departure"`
+	ScheduleRoutes []ScheduleRoute `gorm:"foreignKey:ScheduleID" json:"schedule_routes"`
 }
 
 func (Schedule) TableName() string {
