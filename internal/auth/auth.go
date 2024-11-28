@@ -2,6 +2,7 @@ package auth
 
 import (
 	"log"
+	"net/http"
 	"os"
 
 	"github.com/gorilla/sessions"
@@ -18,7 +19,7 @@ const (
 )
 
 func NewAuth() {
-	err := godotenv.Load()
+	err := godotenv.Load("../../.env")
 
 	if err != nil {
 		log.Fatal("Error loading .env file")
@@ -30,13 +31,18 @@ func NewAuth() {
 	store := sessions.NewCookieStore([]byte(key))
 	store.MaxAge(MaxAge)
 
-	store.Options.Path = "/"
-	store.Options.HttpOnly = true
-	store.Options.Secure = IsProd
+	store.Options = &sessions.Options{
+		Path:     "/",
+		MaxAge:   3600,
+		HttpOnly: true,
+		Secure:   true, // Set to true if using HTTPS
+		SameSite: http.SameSiteNoneMode,
+	}
 
 	gothic.Store = store
 
 	goth.UseProviders(
 		google.New(googleClientId, googleClientSecret, "http://localhost:3000/auth/google/callback"),
 	)
+
 }
