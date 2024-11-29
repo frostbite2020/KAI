@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -13,10 +14,15 @@ import (
 )
 
 func main() {
-	// Load .env
-	err := godotenv.Load("../../.env")
-	if err != nil {
-		log.Fatalf("Error loading .env file: %v", err)
+	if os.Getenv("ENV") == "" || os.Getenv("ENV") == "development" {
+		err := godotenv.Load("../../.env")
+		if err != nil {
+			log.Fatalf("Error loading .env file: %v", err)
+		}
+	}
+
+	for _, e := range os.Environ() {
+		fmt.Println(e)
 	}
 
 	// Inisialisasi auth dan database
