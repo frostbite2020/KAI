@@ -13,7 +13,6 @@ import (
 func RegisterProtectedRoutes(r chi.Router, db *gorm.DB) {
 	r.Route("/api", func(api chi.Router) {
 		// Middleware otentikasi untuk semua rute di bawah "/api"
-		api.Use(middleware.AuthMiddleware(db))
 
 		// Rute yang dilindungi
 		api.Get("/profile", services.GetProfile)
